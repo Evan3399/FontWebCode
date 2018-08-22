@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<meta charset="UTF-8">
+	<title>五子棋</title>
+	<style type="text/css">
+	    body{
+		margin: 0;
+		background-color: #eee;
+	    }
+	    canvas{	 
+		display: block;
+		margin: 40px auto;
+		background-color: #fff;	
+	    }
+	</style>
+    </head>
+    <body>
+    	<canvas id="canvas" width="450px" height="450px"></canvas>
+    </body>
+    <script>
+    	var canvas = document.querySelector("#canvas");
+	var ctx = canvas.getContext("2d");              
+	var chessColor = ["red","black"];               
+	var step = 0;                                  
+	var maparr = [];
+	var mode =[                                   
+	    [1,0],
+            [0,1],
+	    [1,1],
+	    [1,-1]
+	];
+
+	for(var i=0;i<14;i++){
+	    maparr[i]=[];
+	    for(var j=0;j<14;j++){
+		maparr[i][j]=0;
+	    }	
+	}
+        function init(){                                
+	    for(var i=1;i<15;i++){
+		ctx.moveTo(30*i,30);                   
+		ctx.lineTo(30*i,420);                  
+		ctx.moveTo(30,30*i);            
+		ctx.lineTo(420,30*i);
+	    }
+	    ctx.stroke();                             
+	}
+	init();
+
+	function dressChess(x,y,color){
+            ctx.fillStyle = color;                     
+	    ctx.beginPath();                          
+	    ctx.arc(x,y,15,0,Math.PI*2,false);        
+	    ctx.fill();                              
+	    ctx.stroke;                                
+	}
+	
+	canvas.addEventListener("click",function(e){   
+	    dx = Math.floor((e.offsetX+15)/30)*30;     
+	    dy = Math.floor((e.offsetY+15)/30)*30;
+	    if(dx===0||dy===0||dx===450||dy===450){
+		return;
+	    }
+	    px = dx/30 -1;
+	    py = dy/30 -1;
+	    if(maparr[px][py]==0){
+	    	dressChess(dx,dy,chessColor[step%2]);
+	    	maparr[px][py]=chessColor[step%2];
+            	checkWinner(px,py,chessColor[step%2],mode[0]);
+	    	checkWinner(px,py,chessColor[step%2],mode[1]);
+	    	checkWinner(px,py,chessColor[step%2],mode[2]);
+	    	checkWinner(px,py,chessColor[step%2],mode[3]);
+	    	step++;
+	    }
+	});
+
+	function checkWinner(x,y,color,mode){
+	    var count = 0;
+	    for(var i=1;i<5;i++){
+		if(maparr[x+i*mode[0]]){
+		    if(maparr[x+i*mode[0]][y+i*mode[1]]==color){
+			count++;
+		    }else{
+			break;
+		    }
+		}
+	    }
+	    for(var i=0;i<5;i++){
+		if(maparr[x-i*mode[0]]){
+		    if(maparr[x-i*mode[0]][y-i*mode[1]]==color){
+			count++;
+		    }else{
+			break;
+		    }
+		}
+	    }
+	    if(count>4){
+		alert(color+" win!");
+	    }
+	}
+    </script>
+</html>
